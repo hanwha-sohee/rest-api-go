@@ -10,7 +10,7 @@ import (
 )
 
 type Gorm struct {
-	db *gorm.DB
+	_db *gorm.DB
 }
 
 func (m *Gorm) DbInit() {
@@ -28,12 +28,12 @@ func (m *Gorm) DbInit() {
 		log.Fatalln(err)
 	}
 
-	m.db = db
+	m._db = db
 	//return db
 }
 
 func (m *Gorm) DbClose() {
-	db, err := m.db.DB()
+	db, err := m._db.DB()
 	if err != nil {
 		log.Fatalln(err)
 	}
