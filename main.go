@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/go-study/rest-api-go/api"
+	"github.com/go-study/rest-api-go/db/gorm/models"
 	db "github.com/go-study/rest-api-go/db/sqlc"
 	_ "github.com/lib/pq"
 	"log"
@@ -20,9 +21,10 @@ func main() {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	//gorm.Gorm{}.DbInit()
+	g := models.Gorm{}
+	g.DbInit()
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
+	server := api.NewServer(store, &g)
 
 	err = server.Start(serverAddress)
 	if err != nil {

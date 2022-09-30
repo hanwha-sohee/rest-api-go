@@ -7,12 +7,13 @@ import (
 )
 
 type Server struct {
+	store2 *models.Gorm
 	store  *db.Store
 	router *gin.Engine
 }
 
-func NewServer(store *db.Store) *Server {
-	server := &Server{store: store}
+func NewServer(store *db.Store, store2 *models.Gorm) *Server {
+	server := &Server{store: store, store2: store2}
 
 	g := models.Gorm{}
 	g.DbInit()
@@ -21,7 +22,7 @@ func NewServer(store *db.Store) *Server {
 
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
-	router.POST("/token")
+	router.GET("/tokens", server.FindTokens)
 
 	server.router = router
 	return server
