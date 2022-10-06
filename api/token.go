@@ -6,21 +6,11 @@ import (
 	"net/http"
 )
 
-type CreateTokenInput struct {
-	Title  string `json:"title" binding:"required"`
-	Author string `json:"author" binding:"required"`
-}
-
-type UpdatetokenInput struct {
-	Title  string `json:"title"`
-	Author string `json:"author"`
-}
-
 // GET /tokens
 // Find all tokens
-func (server *Server) FindTokens(c *gin.Context) {
+func (server *Server) getTokens(c *gin.Context) {
 	var tokens []models.Token
-	server.gorm.DbTokenFind(&tokens)
+	server.gorm.DbTokensFind(&tokens)
 	//gorm := models.Gorm{}
 	//gorm.DbTokenFind(&tokens)
 	//models.Gorm{}.DB.Table("token_info_table'").Find(&tokens)
@@ -30,67 +20,63 @@ func (server *Server) FindTokens(c *gin.Context) {
 
 // GET /tokens/:id
 // Find a token
-func FindToken(c *gin.Context) {
+func (server *Server) getToken(c *gin.Context) {
 	// Get model if exist
 	var token models.Token
-	//if err := models.DB.Where("id = ?", c.Param("id")).First(&token).Error; err != nil {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-	//	return
-	//}
+	var req models.GetTokenRequest
+	if err := c.ShouldBindUri(&req); err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	server.gorm.DbTokenFind(&token, req.ID)
 
 	c.JSON(http.StatusOK, gin.H{"data": token})
 }
 
 // POST /tokens
 // Create new token
-//func CreateToken(c *gin.Context) {
-//	// Validate input
-//	var input CreateTokenInput
-//	if err := c.ShouldBindJSON(&input); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//
-//	// Create token
-//	token := models.Token{Title: input.Title, Author: input.Author}
-//	models.DB.Create(&token)
-//
-//	c.JSON(http.StatusOK, gin.H{"data": token})
-//}
+func (server *Server) CreateToken(c *gin.Context) {
+	// Validate input
+	var input models.CreateTokenInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create token
+	token := models.Token{Id: input.Id, Name: input.Name, Default_amount: input.Default_amount}
+	server.gorm.DbTokenCreate(&token)
+
+	c.JSON(http.StatusOK, gin.H{"data": token})
+}
 
 // PATCH /tokens/:id
 // Update a token
-//func UpdateToken(c *gin.Context) {
-//	// Get model if exist
-//	var token models.Token
-//	if err := models.DB.Where("id = ?", c.Param("id")).First(&token).Error; err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-//		return
-//	}
-//
-//	// Validate input
-//	var input UpdateTokenInput
-//	if err := c.ShouldBindJSON(&input); err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//		return
-//	}
-//
-//	models.DB.Model(&token).Updates(input)
-//
-//	c.JSON(http.StatusOK, gin.H{"data": token})
-//}
+func (server *Server) UpdateToken(c *gin.Context) {
+	// Get model if exist
+	var token models.Token
+	server.gorm.DbTokenFind(&token, c.Param("id"))
+
+	// Validate input
+	var input models.UpdateTokenInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	server.gorm.DbTokenUpdate(&token, &input)
+
+	c.JSON(http.StatusOK, gin.H{"data": token})
+}
 
 // DELETE /tokens/:id
 // Delete a token
-//func DeleteToken(c *gin.Context) {
-//	// Get model if exist
-//	var token models.Token
-//	if err := models.DB.Where("id = ?", c.Param("id")).First(&token).Error; err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-//		return
-//	}
-//
-//	models.DB.Delete(&token)
-//
-//	c.JSON(http.StatusOK, gin.H{"data": true})
-//}
+func (server *Server) DeleteToken(c *gin.Context) {
+	// Get model if exist
+	var token models.Token
+	server.gorm.DbTokenFind(&token, c.Param("id"))
+	server.gorm.DbTokenDelete(&token)
+
+	c.JSON(http.StatusOK, gin.H{"data": true})
+}

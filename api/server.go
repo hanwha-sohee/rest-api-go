@@ -22,7 +22,12 @@ func NewServer(store *db.Store, gorm *models.Gorm) *Server {
 
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/tokens", server.FindTokens)
+
+	router.GET("/tokens", server.getTokens)
+	router.GET("/tokens/:id", server.getToken)
+	router.POST("/tokens", server.CreateToken)
+	router.PATCH("/tokens/:id", server.UpdateToken)
+	router.DELETE("/tokens/:id", server.DeleteToken)
 
 	server.router = router
 	return server
