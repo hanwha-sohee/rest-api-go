@@ -20,8 +20,9 @@ type UpdatetokenInput struct {
 // Find all tokens
 func (server *Server) FindTokens(c *gin.Context) {
 	var tokens []models.Token
-	gorm := models.Gorm{}
-	gorm.DbTokenFind(&tokens)
+	server.gorm.DbTokenFind(&tokens)
+	//gorm := models.Gorm{}
+	//gorm.DbTokenFind(&tokens)
 	//models.Gorm{}.DB.Table("token_info_table'").Find(&tokens)
 
 	c.JSON(http.StatusOK, gin.H{"data": tokens})
@@ -29,16 +30,16 @@ func (server *Server) FindTokens(c *gin.Context) {
 
 // GET /tokens/:id
 // Find a token
-//func FindToken(c *gin.Context) {
-//	// Get model if exist
-//	var token models.Token
-//	if err := models.DB.Where("id = ?", c.Param("id")).First(&token).Error; err != nil {
-//		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{"data": token})
-//}
+func FindToken(c *gin.Context) {
+	// Get model if exist
+	var token models.Token
+	//if err := models.DB.Where("id = ?", c.Param("id")).First(&token).Error; err != nil {
+	//	c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+	//	return
+	//}
+
+	c.JSON(http.StatusOK, gin.H{"data": token})
+}
 
 // POST /tokens
 // Create new token

@@ -7,13 +7,13 @@ import (
 )
 
 type Server struct {
-	store2 *models.Gorm
+	gorm   *models.Gorm
 	store  *db.Store
 	router *gin.Engine
 }
 
-func NewServer(store *db.Store, store2 *models.Gorm) *Server {
-	server := &Server{store: store, store2: store2}
+func NewServer(store *db.Store, gorm *models.Gorm) *Server {
+	server := &Server{store: store, gorm: gorm}
 
 	g := models.Gorm{}
 	g.DbInit()

@@ -25,8 +25,8 @@ func (m *Gorm) DbInit() {
 	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 
 	db.AutoMigrate(&Token{})
-	fmt.Println("db source name: ", db)
-	db.Set("gorm:table_options", "")
+	//fmt.Println("db source name: ", db)
+	//db.Set("gorm:table_options", "")
 
 	if err != nil {
 		log.Fatalln(err)
